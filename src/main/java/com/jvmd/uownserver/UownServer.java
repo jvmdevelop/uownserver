@@ -18,6 +18,5 @@ public final class UownServer extends JavaPlugin {
     @Override
     public void onDisable() {
         log.info("Stopping UownServer...");
-
     }
 }
