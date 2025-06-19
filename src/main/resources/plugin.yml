@@ -1,0 +1,4 @@
+name: UownServer
+version: '${project.version}'
+main: com.jvmd.uownserver.UownServer
+api-version: '1.16'
