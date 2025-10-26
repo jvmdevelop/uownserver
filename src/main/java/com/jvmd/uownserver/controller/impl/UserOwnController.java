@@ -29,14 +29,9 @@ public class UserOwnController implements Controller {
         });
         if (ref.paramsCounter == 0) return "Params in empty";
 
-        if (path.startsWith("/api/v1/user")){
-            String userNameParam = path.substring("/api/v1/user?username=".length());
-            User o = (User) Managers.getUserOwnManager().getObjects().stream().filter((user) -> Objects.equals(((User) user).getUsername(), userNameParam)).findFirst().get();
-            return o.toString();
-        }
         if (path.startsWith("/api/v1/user/own")){
             String userNameParam = path.substring("/api/v1/user/own?username=".length());
-            EOwn o = ((User) Managers.getUserOwnManager().getObjects().stream().filter((user) -> Objects.equals(((User) user).getUsername(), userNameParam)).findFirst().get()).getOwn();
+            EOwn o = Managers.getUserOwnManager().getUserOwn(userNameParam);
             return o.toString();
         }
 

@@ -1,5 +1,6 @@
 package com.jvmd.uownserver.manager.abs;
 
+import com.jvmd.uownserver.model.EOwn;
 import com.jvmd.uownserver.model.User;
 import com.jvmd.uownserver.util.MorphiaUtil;
 import dev.morphia.Datastore;
@@ -40,6 +41,9 @@ public class UserKillsManager extends ObjectManagerImpl<User> {
 
     public void addKill(String username) {
         User user = datastore.createQuery(User.class).filter(Filters.eq("username", username)).stream().findFirst().get();
+        if (user == null) {
+            datastore.save(new User(username, EOwn.GREEN, 0));
+        }
         user.setKills(user.getKills() + 1);
         datastore.save(user);
     }
