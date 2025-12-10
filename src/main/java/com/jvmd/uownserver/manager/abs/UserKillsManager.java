@@ -40,10 +40,17 @@ public class UserKillsManager extends ObjectManagerImpl<User> {
     }
 
     public void addKill(String username) {
-        User user = datastore.createQuery(User.class).filter(Filters.eq("username", username)).stream().findFirst().get();
+        User user = datastore.createQuery(User.class)
+                .filter(Filters.eq("username", username))
+                .stream()
+                .findFirst()
+                .orElse(null);
+
         if (user == null) {
-            datastore.save(new User(username, EOwn.GREEN, 0));
+            user = new User(username, EOwn.GREEN, 0);
+            datastore.save(user);
         }
+
         user.setKills(user.getKills() + 1);
         datastore.save(user);
     }
@@ -53,9 +60,14 @@ public class UserKillsManager extends ObjectManagerImpl<User> {
     }
 
     private void removeKill(String username) {
-        User user = datastore.createQuery(User.class).filter(Filters.eq("username", username)).stream().findFirst().get();
-        user.setKills(user.getKills() - 1);
-        datastore.save(user);
+        User user = datastore.createQuery(User.class).filter(Filters.eq("username", username)).stream().findFirst().orElse(null);
+
+        if (user == null) return;
+
+        if (user.getKills() > 0) {
+            user.setKills(user.getKills() - 1);
+            datastore.save(user);
+        }
     }
 
 
