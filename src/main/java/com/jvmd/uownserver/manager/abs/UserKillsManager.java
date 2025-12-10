@@ -25,9 +25,9 @@ public class UserKillsManager extends ObjectManagerImpl<User> {
             Query<User> users = datastore.find(User.class);
             users.stream().forEach(user -> {
                 int kills = user.getKills();
-               if (kills > 0) {
-                   removeKill(user.getUsername());
-               }
+                if (kills > 0) {
+                    removeKill(user.getUsername());
+                }
             });
 
         }
@@ -36,7 +36,7 @@ public class UserKillsManager extends ObjectManagerImpl<User> {
     private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
     public UserKillsManager() {
-        executor.scheduleAtFixedRate(new DelayCountDowner(), 5, 5, TimeUnit.SECONDS);
+        executor.scheduleAtFixedRate(new DelayCountDowner(), 1, 2, TimeUnit.SECONDS);
     }
 
     public void addKill(String username) {

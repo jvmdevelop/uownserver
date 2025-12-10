@@ -27,7 +27,7 @@ public class UserOwnManager extends ObjectManagerImpl<User> {
                 user.calcOwn();
                 setUserOwn(user);
             });
-        }, 1L , 100L);
+        }, 1L , 60L);
     }
 
     public EOwn getUserOwn(String username) {
