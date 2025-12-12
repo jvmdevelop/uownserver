@@ -31,7 +31,17 @@ public class UserOwnManager extends ObjectManagerImpl<User> {
     }
 
     public EOwn getUserOwn(String username) {
-        User user = datastore.createQuery(User.class).filter(Filters.eq("username", username)).stream().findFirst().get();
+        User user = datastore.createQuery(User.class)
+                .filter(Filters.eq("username", username))
+                .stream()
+                .findFirst()
+                .orElse(null);
+
+        if (user == null) {
+            user = new User(username, EOwn.GREEN, 0);
+            datastore.save(user);
+        }
+
         return user.getOwn();
     }
 
