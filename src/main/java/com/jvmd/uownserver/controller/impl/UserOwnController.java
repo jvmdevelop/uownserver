@@ -3,12 +3,9 @@ package com.jvmd.uownserver.controller.impl;
 import com.jvmd.uownserver.controller.Controller;
 import com.jvmd.uownserver.manager.Managers;
 import com.jvmd.uownserver.model.EOwn;
-import com.jvmd.uownserver.model.User;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
-import java.util.Objects;
-import java.util.Optional;
-
+@Slf4j
 public class UserOwnController implements Controller {
 
     public UserOwnController() {
@@ -33,6 +30,11 @@ public class UserOwnController implements Controller {
             String userNameParam = path.substring("/api/v1/user/own?username=".length());
             EOwn o = Managers.getUserOwnManager().getUserOwn(userNameParam);
             return o.toString();
+        }
+        if (path.startsWith("/api/v1/donate/")) {
+            String userNameParam = path.substring("/api/v1/donate?username=".length());
+            String userDonate = path.substring("/api/v1/donate?username=".length() + userNameParam.length() + "?donate=".length());
+            log.info("Received donation: {} {}", userNameParam,userDonate);
         }
 
         return null;

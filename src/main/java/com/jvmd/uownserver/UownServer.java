@@ -1,6 +1,8 @@
 package com.jvmd.uownserver;
 
+import com.jvmd.uownserver.controller.impl.UserOwnController;
 import com.jvmd.uownserver.event.OnKillListener;
+import com.jvmd.uownserver.manager.abs.UserOwnManager;
 import com.jvmd.uownserver.util.ConfigUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -13,6 +15,7 @@ public final class UownServer extends JavaPlugin {
     @Override
     public void onEnable() {
         getServer().getPluginManager().registerEvents(new OnKillListener() , this);
+        new UserOwnController();
         log.info("Starting UownServer...");
         ConfigUtil.load(this);
     }
