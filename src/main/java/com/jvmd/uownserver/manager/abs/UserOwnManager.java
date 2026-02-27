@@ -17,15 +17,13 @@ import java.util.concurrent.TimeUnit;
 
 public class UserOwnManager extends ObjectManagerImpl<User> {
 
-    private final Datastore datastore = MorphiaUtil.getDatastore();
-
     public UserOwnManager() {
         ConfigUtil.getScheduler().scheduleSyncRepeatingTask(ConfigUtil.getP(), ()->{
             datastore.find(User.class).forEach((user) -> {
                 int kills = Managers.getUserKillsManager().getKills(user.getUsername());
                 user.setKills(kills);
                 user.calcOwn();
-                setUserOwn(user);
+                addObject(user);
             });
         }, 1L , 60L);
     }
@@ -39,14 +37,10 @@ public class UserOwnManager extends ObjectManagerImpl<User> {
 
         if (user == null) {
             user = new User(username, EOwn.GREEN, 0);
-            datastore.save(user);
+            addObject(user);
         }
 
         return user.getOwn();
-    }
-
-    private void setUserOwn(User user) {
-        datastore.save(user);
     }
 
 }

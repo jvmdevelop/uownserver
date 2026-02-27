@@ -17,8 +17,6 @@ import java.util.concurrent.TimeUnit;
 
 public class UserKillsManager extends ObjectManagerImpl<User> {
 
-    private final Datastore datastore = MorphiaUtil.getDatastore();
-
     private final class DelayCountDowner implements Runnable {
         @Override
         public void run() {
@@ -48,11 +46,11 @@ public class UserKillsManager extends ObjectManagerImpl<User> {
 
         if (user == null) {
             user = new User(username, EOwn.GREEN, 0);
-            datastore.save(user);
+            addObject(user);
         }
 
         user.setKills(user.getKills() + 1);
-        datastore.save(user);
+        addObject(user);
     }
 
     public int getKills(String username) {
@@ -66,7 +64,7 @@ public class UserKillsManager extends ObjectManagerImpl<User> {
 
         if (user.getKills() > 0) {
             user.setKills(user.getKills() - 1);
-            datastore.save(user);
+            addObject(user);
         }
     }
 
