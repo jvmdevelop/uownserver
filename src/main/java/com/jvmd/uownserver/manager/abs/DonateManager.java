@@ -7,7 +7,7 @@ public class DonateManager extends ObjectManagerImpl<Donate> {
 
 
     public Donate findDonateByNickname(String nickname) {
-        return datastore.createQuery(Donate.class).filter(Filters.eq("nicname" , nickname)).iterator().next();
+        return datastore.createQuery(Donate.class).filter(Filters.eq("nickname" , nickname)).iterator().next();
     }
 
 
