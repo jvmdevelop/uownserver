@@ -7,6 +7,11 @@ import com.jvmd.uownserver.model.DonateType;
 import com.jvmd.uownserver.model.EOwn;
 import lombok.extern.slf4j.Slf4j;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+
 @Slf4j
 public class UserOwnController implements Controller {
 
@@ -16,31 +21,52 @@ public class UserOwnController implements Controller {
 
     @Override
     public String getResponse(String path) {
-        if (path.isEmpty()) return "String is empty";
-        var ref = new Object() {
-            int paramsCounter = 0;
-        };
-        path.chars().forEach(c -> {
-            char ch = (char) c;
-            if (ch == '?'){
-                ref.paramsCounter += 1;
-            }
-        });
-        if (ref.paramsCounter == 0) return "Params in empty";
+        if (path == null || path.isEmpty()) return "String is empty";
 
-        if (path.startsWith("/api/v1/user/own")){
-            String userNameParam = path.substring("/api/v1/user/own?username=".length());
-            EOwn o = Managers.getUserOwnManager().getUserOwn(userNameParam);
-            return o.toString();
+        int queryIndex = path.indexOf('?');
+        if (queryIndex == -1) return "Params in empty";
+
+        String queryString = path.substring(queryIndex + 1);
+        Map<String, String> params = new HashMap<>();
+
+        for (String pair : queryString.split("&")) {
+            int eqIndex = pair.indexOf('=');
+            if (eqIndex > 0) {
+                String key = URLDecoder.decode(pair.substring(0, eqIndex), StandardCharsets.UTF_8);
+                String value = URLDecoder.decode(pair.substring(eqIndex + 1), StandardCharsets.UTF_8);
+                params.put(key, value);
+            }
         }
-        if (path.startsWith("/api/v1/donate/")) {
-            String nickname = path.substring("/api/v1/donate?username=".length());
-            String userDonate = path.substring("/api/v1/donate?username=".length() + nickname.length() + "?donate=".length());
-            log.info("Received donation: {} {}", nickname,userDonate);
+
+        if (params.isEmpty()) return "Params in empty";
+
+        if (path.startsWith("/api/v1/user/own")) {
+            String userName = params.get("username");
+            if (userName == null) return "Missing username param";
+
+            EOwn o = Managers.getUserOwnManager().getUserOwn(userName);
+            return o != null ? o.toString() : "User not found";
+        }
+
+        if (path.startsWith("/api/v1/donate")) {
+            String nickname = params.get("username");
+            String userDonate = params.get("donate");
+
+            if (nickname == null || userDonate == null) {
+                return "Missing required params: username, donate";
+            }
+
+            log.info("Received donation: {} {}", nickname, userDonate);
+
             Donate donate = new Donate();
             donate.setNickname(nickname);
-            donate.setType(DonateType.valueOf(userDonate));
-            Managers.getDonateManager().addObject(donate);
+            try {
+                donate.setType(DonateType.valueOf(userDonate.toUpperCase()));
+                Managers.getDonateManager().addObject(donate);
+                return "OK";
+            } catch (IllegalArgumentException e) {
+                return "Invalid donate type: " + userDonate;
+            }
         }
 
         return null;
