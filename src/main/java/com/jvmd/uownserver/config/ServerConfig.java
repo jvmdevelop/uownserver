@@ -10,6 +10,7 @@ public final class ServerConfig {
     private  String host;
     private  int port;
     private  String password;
+    private  String trustedIp;
 
 
 }

@@ -1,74 +1,67 @@
 package com.jvmd.uownserver.controller.impl;
 
 import com.jvmd.uownserver.controller.Controller;
+import com.jvmd.uownserver.config.PluginConfig;
 import com.jvmd.uownserver.manager.Managers;
 import com.jvmd.uownserver.model.Donate;
 import com.jvmd.uownserver.model.DonateType;
 import com.jvmd.uownserver.model.EOwn;
+import io.javalin.Javalin;
 import lombok.extern.slf4j.Slf4j;
-
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
 
 @Slf4j
 public class UserOwnController implements Controller {
 
     public UserOwnController() {
-        openConnection();
+        startServer();
     }
 
     @Override
-    public String getResponse(String path) {
-        if (path == null || path.isEmpty()) return "String is empty";
-
-        int queryIndex = path.indexOf('?');
-        if (queryIndex == -1) return "Params in empty";
-
-        String queryString = path.substring(queryIndex + 1);
-        Map<String, String> params = new HashMap<>();
-
-        for (String pair : queryString.split("&")) {
-            int eqIndex = pair.indexOf('=');
-            if (eqIndex > 0) {
-                String key = URLDecoder.decode(pair.substring(0, eqIndex), StandardCharsets.UTF_8);
-                String value = URLDecoder.decode(pair.substring(eqIndex + 1), StandardCharsets.UTF_8);
-                params.put(key, value);
+    public void setupRoutes(Javalin app) {
+        app.get("/api/v1/user/own", ctx -> {
+            String userName = ctx.queryParam("username");
+            if (userName == null) {
+                ctx.status(400).result("Missing username param");
+                return;
             }
-        }
-
-        if (params.isEmpty()) return "Params in empty";
-
-        if (path.startsWith("/api/v1/user/own")) {
-            String userName = params.get("username");
-            if (userName == null) return "Missing username param";
 
             EOwn o = Managers.getUserOwnManager().getUserOwn(userName);
-            return o != null ? o.toString() : "User not found";
-        }
+            if (o != null) {
+                ctx.result(o.toString());
+            } else {
+                ctx.status(404).result("User not found");
+            }
+        });
 
-        if (path.startsWith("/api/v1/donate")) {
-            String nickname = params.get("username");
-            String userDonate = params.get("donate");
+        app.post("/api/v1/donate", ctx -> {
+            String clientIp = ctx.ip();
+            String trustedIp = PluginConfig.getServerConfig().getTrustedIp();
+
+            if (trustedIp != null && !trustedIp.isEmpty() && !trustedIp.equals(clientIp)) {
+                log.warn("Unauthorized donation attempt from IP: {}", clientIp);
+                ctx.status(403).result("Access denied: IP not trusted");
+                return;
+            }
+
+            String nickname = ctx.formParam("username");
+            String userDonate = ctx.formParam("donate");
 
             if (nickname == null || userDonate == null) {
-                return "Missing required params: username, donate";
+                ctx.status(400).result("Missing required params: username, donate");
+                return;
             }
 
-            log.info("Received donation: {} {}", nickname, userDonate);
+            log.info("Received donation from trusted IP {}: {} {}", clientIp, nickname, userDonate);
 
-            Donate donate = new Donate();
-            donate.setNickname(nickname);
             try {
+                Donate donate = new Donate();
+                donate.setNickname(nickname);
                 donate.setType(DonateType.valueOf(userDonate.toUpperCase()));
                 Managers.getDonateManager().addObject(donate);
-                return "OK";
+                ctx.result("OK");
             } catch (IllegalArgumentException e) {
-                return "Invalid donate type: " + userDonate;
+                ctx.status(400).result("Invalid donate type: " + userDonate);
             }
-        }
-
-        return null;
+        });
     }
 }
