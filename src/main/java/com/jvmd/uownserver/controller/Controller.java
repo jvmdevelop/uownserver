@@ -7,10 +7,6 @@ public interface Controller {
 
     void setupRoutes(Javalin app);
 
-    default String getName() {
-        return this.getClass().getSimpleName();
-    }
-
     default Javalin createApp() {
         return Javalin.create();
     }

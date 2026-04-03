@@ -2,7 +2,3 @@ host: "localhost"
 port: 25565
 password: "deltaq123"
 trustedIp: "89.169.55.27"
-
-url: "jdbc:mysql://localhost:3306/uownserver"
-username: "root"
-dbPassword: "changeme"
