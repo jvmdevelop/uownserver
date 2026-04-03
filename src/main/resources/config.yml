@@ -1,4 +1,3 @@
-host: "localhost"
 port: 25565
 password: "deltaq123"
 trustedIp: "89.169.55.27"
