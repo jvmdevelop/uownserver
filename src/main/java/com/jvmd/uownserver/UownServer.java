@@ -2,6 +2,7 @@ package com.jvmd.uownserver;
 
 import com.jvmd.uownserver.controller.impl.UserOwnController;
 import com.jvmd.uownserver.event.OnKillListener;
+import com.jvmd.uownserver.event.RollListener;
 import com.jvmd.uownserver.manager.abs.UserOwnManager;
 import com.jvmd.uownserver.util.ConfigUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,7 @@ public final class UownServer extends JavaPlugin {
         ConfigUtil.load(this);
         log.info("Starting UownServer...");
         getServer().getPluginManager().registerEvents(new OnKillListener(), this);
+        getServer().getPluginManager().registerEvents(new RollListener(), this);
         new UserOwnController();
     }
 

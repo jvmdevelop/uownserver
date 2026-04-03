@@ -1,6 +1,5 @@
 package com.jvmd.uownserver.util;
 
-import com.jvmd.uownserver.config.PluginConfig;
 import com.mongodb.client.MongoClients;
 import dev.morphia.Datastore;
 import dev.morphia.Morphia;
