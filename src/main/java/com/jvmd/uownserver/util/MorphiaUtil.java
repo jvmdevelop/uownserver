@@ -11,8 +11,7 @@ public class MorphiaUtil {
     private static final Datastore datastore;
 
     static {
-        String url = PluginConfig.getPluginConfig().getUrl();
-        datastore = Morphia.createDatastore(MongoClients.create(url));
+        datastore = Morphia.createDatastore(MongoClients.create());
         datastore.getMapper().mapPackage("com.jvmd.uownserver.model");
         datastore.ensureIndexes();
     }

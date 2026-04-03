@@ -10,7 +10,7 @@ public final class PluginConfig {
     private static final ServerConfig serverConfig;
 
     static {
-        serverConfig = new ServerConfig(ConfigUtil.getConfig().getString("host"),ConfigUtil.getConfig().getInt("port"),ConfigUtil.getConfig().getString("password"), ConfigUtil.getConfig().getString("trustedIp"));
+        serverConfig = new ServerConfig(ConfigUtil.getConfig().getInt("port"),ConfigUtil.getConfig().getString("trustedIp"));
     }
 
 }
