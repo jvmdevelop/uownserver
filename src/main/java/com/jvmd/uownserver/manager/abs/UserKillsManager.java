@@ -54,7 +54,11 @@ public class UserKillsManager extends ObjectManagerImpl<User> {
     }
 
     public int getKills(String username) {
-        return datastore.createQuery(User.class).filter(Filters.eq("username" , username)).iterator().next().getKills();
+        return datastore.createQuery(User.class)
+                .filter(Filters.eq("username", username))
+                .stream().findFirst()
+                .map(User::getKills)
+                .orElse(0);
     }
 
     private void removeKill(String username) {

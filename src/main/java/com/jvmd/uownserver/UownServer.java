@@ -14,10 +14,10 @@ public final class UownServer extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        getServer().getPluginManager().registerEvents(new OnKillListener() , this);
-        new UserOwnController();
-        log.info("Starting UownServer...");
         ConfigUtil.load(this);
+        log.info("Starting UownServer...");
+        getServer().getPluginManager().registerEvents(new OnKillListener(), this);
+        new UserOwnController();
     }
 
     @Override

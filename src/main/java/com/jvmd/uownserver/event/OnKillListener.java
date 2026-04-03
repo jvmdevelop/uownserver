@@ -6,15 +6,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
-import java.util.EventListener;
-
 public class OnKillListener implements Listener {
 
 
     @EventHandler
     public void onKill(PlayerDeathEvent e) {
         Player p = e.getEntity().getKiller();
-        assert p != null;
+        if (p == null) return;
         Managers.getUserKillsManager().addKill(p.getName());
     }
 

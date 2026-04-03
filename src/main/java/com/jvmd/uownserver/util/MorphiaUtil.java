@@ -1,5 +1,6 @@
 package com.jvmd.uownserver.util;
 
+import com.jvmd.uownserver.config.PluginConfig;
 import com.mongodb.client.MongoClients;
 import dev.morphia.Datastore;
 import dev.morphia.Morphia;
@@ -10,10 +11,10 @@ public class MorphiaUtil {
     private static final Datastore datastore;
 
     static {
-        datastore = Morphia.createDatastore(MongoClients.create());
-//        datastore.getMapper().mapPackage("dev.morphia.example");
-//        datastore.ensureIndexes();
+        String url = PluginConfig.getPluginConfig().getUrl();
+        datastore = Morphia.createDatastore(MongoClients.create(url));
+        datastore.getMapper().mapPackage("com.jvmd.uownserver.model");
+        datastore.ensureIndexes();
     }
 
 }
-

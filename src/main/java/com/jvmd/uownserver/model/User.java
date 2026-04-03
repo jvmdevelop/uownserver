@@ -2,7 +2,6 @@ package com.jvmd.uownserver.model;
 
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import dev.morphia.annotations.Reference;
 import lombok.*;
 
 @Builder
@@ -14,15 +13,16 @@ import lombok.*;
 public class User {
     @Id
     private String username;
-    @Reference
     private EOwn own;
 
     private int kills;
 
-    public void calcOwn(){
-        if (kills == 1){
+    public void calcOwn() {
+        if (kills == 0) {
+            own = EOwn.GREEN;
+        } else if (kills == 1) {
             own = EOwn.ORANGE;
-        }else if (kills >= 2){
+        } else {
             own = EOwn.RED;
         }
     }
@@ -31,7 +31,7 @@ public class User {
     public String toString() {
         return """
                 {
-                "username": "%s"
+                "username": "%s",
                 "own" : "%s"
                 }
                 """.formatted(username, own);
